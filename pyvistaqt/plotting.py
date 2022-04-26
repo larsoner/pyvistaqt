@@ -690,7 +690,9 @@ class BackgroundPlotter(QtInteractor):
         # Currently no way to check if str/path is actually correct (want to
         # allow resource paths and the like so os.path.isfile is no good)
         # and icon.isNull() returns False even if the path is bogus.
-        self.app.setWindowIcon(QtGui.QIcon(img))
+        img = QtGui.QIcon(img)
+        assert not img.isNull()
+        # self.app.setWindowIcon(img)
 
     def _qt_screenshot(self, show: bool = True) -> FileDialog:
         return FileDialog(
