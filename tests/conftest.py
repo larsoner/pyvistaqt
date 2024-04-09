@@ -120,3 +120,28 @@ def no_qt(monkeypatch):
     if need_reload:
         importlib.reload(pyvistaqt)
         assert 'qtpy' in sys.modules
+
+
+# Adapted from MNE-Python and
+# https://docs.pytest.org/en/latest/example/simple.html#making-test-result-information-available-in-fixtures  # noqa: E501
+
+_phase_report_key = pytest.StashKey()
+
+
+@pytest.fixture
+def check_test_passed(request):
+    """Return a function that checks if a test passed."""
+    def _test_passed():
+        if _phase_report_key not in request.node.stash:
+            return True
+        report = request.node.stash[_phase_report_key]
+        return "call" in report and report["call"].outcome == "passed"
+    return _test_passed
+
+
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    """Stash the status of each item."""
+    outcome = yield
+    rep = outcome.get_result()
+    item.stash.setdefault(_phase_report_key, {})[rep.when] = rep

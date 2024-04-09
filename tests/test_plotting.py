@@ -281,7 +281,7 @@ def test_editor(qtbot, plotting):
 
 
 @pytest.fixture()
-def ensure_closed():
+def ensure_closed(check_test_passed):
     """Ensure all plotters are closed."""
     try:
         from pyvista.plotting import close_all
@@ -291,6 +291,8 @@ def ensure_closed():
     close_all()  # this is necessary to test _ALL_PLOTTERS
     assert len(_ALL_PLOTTERS) == 0
     yield
+    if not check_test_passed():
+        return
     WANT_AFTER = 0 if PV_VERSION >= Version('0.37') else 1
     assert len(_ALL_PLOTTERS) == WANT_AFTER
 
