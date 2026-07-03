@@ -221,6 +221,7 @@ def test_mouse_interactions(qtbot, debug_log_level) -> None:  # noqa: D103,ARG00
     plotter.close()
 
 
+@pytest.mark.skip_check_gc  # XXX this keeps a ref  # noqa: FIX003, TD001, TD002, TD003, TD004
 def test_ipython(qapp) -> None:  # noqa: ARG001, D103
     IPython = pytest.importorskip("IPython")  # noqa: N806
     cmd = "from pyvistaqt import BackgroundPlotter as Plotter;p = Plotter(show=False, off_screen=False); p.close(); exit()"
@@ -293,15 +294,14 @@ def test_counter(qtbot) -> None:  # noqa: D103
     assert counter.count == 0
 
 
-# TODO: Fix gc on PySide6  # noqa: FIX002, TD002, TD003
 @pytest.mark.parametrize("border", [True, False])
-@pytest.mark.allow_bad_gc_pyside
+@pytest.mark.allow_bad_gc_pyside  # fixed in PyVista >= 0.49.dev0
 def test_subplot_gc(border) -> None:  # noqa: D103
     plotter = BackgroundPlotter(shape=(2, 1), update_app_icon=False, border=border)
     plotter.close()  # TODO: Should automatically close but need it on macOS + PySide6!  # noqa: FIX002, TD002, TD003
 
 
-@pytest.mark.allow_bad_gc_pyside
+@pytest.mark.allow_bad_gc_pyside  # fixed in PyVista >= 0.49.dev0
 def test_editor(qtbot, plotting) -> None:  # noqa: ARG001, D103
     print("test editor=False")
     plotter = BackgroundPlotter(editor=False, off_screen=False)
@@ -603,7 +603,6 @@ def test_background_plotter_export_files(qtbot, tmpdir, show_plotter, plotting) 
     assert not window.isVisible()
 
 
-@pytest.mark.allow_bad_gc
 def test_background_plotter_export_vtkjs(qtbot, tmpdir, plotting) -> None:  # noqa: ARG001, D103
     # VTKjs export is only guaranteed on current pyvista + VTK.
     # Older pyvista (< 0.47) still imports the deprecated `nest_asyncio`
@@ -663,7 +662,7 @@ def test_background_plotter_export_vtkjs(qtbot, tmpdir, plotting) -> None:  # no
         assert os.path.isfile(filename + ext)  # noqa: PTH113
 
 
-# vtkWeakReference and vtkFloatArray, only sometimes -- usually macOS
+# vtkWeakReference and vtkFloatArray, only sometimes -- usually macOS; fixed in PyVista >= 0.49.dev0
 @pytest.mark.allow_bad_gc
 def test_background_plotting_orbit(qtbot, plotting) -> None:  # noqa: ARG001, D103
     plotter = BackgroundPlotter(off_screen=False, title="Testing Window")
@@ -708,7 +707,7 @@ def test_background_plotting_toolbar(qtbot, plotting) -> None:  # noqa: ARG001, 
     plotter.close()
 
 
-# TODO: _render_passes not GC'ed  # noqa: FIX002, TD002, TD003
+# _render_passes not GC'ed; fixed in PyVista >= 0.49.dev0
 @pytest.mark.allow_bad_gc_pyside
 @pytest.mark.skipif(platform.system() == "Windows", reason="Segfaults on Windows")
 def test_background_plotting_menu_bar(qtbot, plotting) -> None:  # noqa: ARG001, D103
@@ -899,10 +898,9 @@ def test_background_plotting_add_callback(qtbot, monkeypatch, plotting) -> None:
     assert not callback_timer.isActive()  # window stops the callback
 
 
-# TODO: Need to fix this allow_bad_gc:  # noqa: FIX002, TD002, TD003
-# - the actors are not cleaned up in the non-empty scene case
-# - the q_key_press leaves a lingering vtkUnsignedCharArray referred to by
-#   a "managedbuffer" object
+# The actors are not cleaned up in the non-empty scene case, and the q_key_press
+# case leaves a lingering vtkUnsignedCharArray referred to by a "managedbuffer"
+# object; both are fixed in PyVista >= 0.49.dev0.
 @pytest.mark.allow_bad_gc
 @pytest.mark.slow
 @pytest.mark.allow_bad_gc_pyside

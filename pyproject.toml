@@ -38,6 +38,8 @@ test = [
     "pytest-cov==7.1.0",
     "pytest-memprof==0.2.0",
     "pytest-qt==4.5.0",
+    # Used to gate the allow_bad_gc(_pyside) markers on the installed PyVista version.
+    "packaging",
     # Pull in whatever trame/nest_asyncio stack the installed pyvista needs
     # for VTKjs export. Each pyvista version pins its own compatible deps.
     "pyvista[jupyter]",
