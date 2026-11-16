@@ -67,5 +67,6 @@ docs/external_examples.rst
 
 # vim
 *.swp
+/.claude/
 
 uv.lock
