@@ -53,7 +53,6 @@ except ImportError:  # PV < 0.40
 import pyvistaqt
 from pyvistaqt import BackgroundPlotter
 from pyvistaqt import MainWindow
-from pyvistaqt import MultiPlotter
 from pyvistaqt import QtInteractor
 from pyvistaqt.dialog import FileDialog
 from pyvistaqt.editor import Editor
@@ -1652,39 +1651,6 @@ def test_background_plotting_close(qtbot, close_event, empty_scene, plotting, en
 
     # check that BasePlotter.close() is called
     assert plotter._closed  # noqa: SLF001
-
-
-def test_multiplotter(qtbot, plotting) -> None:  # noqa: ARG001, D103
-    with pytest.warns(FutureWarning, match="MultiPlotter is deprecated"):
-        mp = MultiPlotter(
-            nrows=1,
-            ncols=2,
-            window_size=(300, 300),
-            show=False,
-            title="Test",
-            off_screen=False,
-        )
-    qtbot.addWidget(mp._window)  # noqa: SLF001
-    mp[0, 0].add_mesh(pyvista.Cone())
-    mp[0, 1].add_mesh(pyvista.Box())
-    assert not mp._window.isVisible()  # noqa: SLF001
-    with wait_exposed(qtbot, mp._window):  # noqa: SLF001
-        mp.show()
-    assert mp._window.isVisible()  # noqa: SLF001
-    for p in mp._plotters:  # noqa: SLF001
-        assert not p._closed  # noqa: SLF001
-    with qtbot.wait_signals([mp._window.signal_close], timeout=1000):  # noqa: SLF001
-        mp.close()
-    for p in mp._plotters:  # noqa: SLF001
-        assert p._closed  # noqa: SLF001
-
-    # cover default show=True
-    with pytest.warns(FutureWarning, match="MultiPlotter is deprecated"):
-        mp = MultiPlotter(off_screen=False, menu_bar=False, toolbar=False)
-    qtbot.addWidget(mp._window)  # noqa: SLF001
-    with wait_exposed(qtbot, mp._window):  # noqa: SLF001
-        assert mp._window.isVisible()  # noqa: SLF001
-    mp.close()
 
 
 def _create_testing_scene(empty_scene, show=False, off_screen=False):  # noqa: ANN202, FBT002

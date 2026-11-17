@@ -42,43 +42,33 @@ and functions like a normal PyVista ``Plotter`` instance. For example:
     sphere.points *= 0.5
 
 
-Multiple Plotters
-~~~~~~~~~~~~~~~~~
+Multiple Views
+~~~~~~~~~~~~~~
 
-.. deprecated:: 0.13
-   ``MultiPlotter`` is deprecated and will be removed in 0.14. Use
-   ``BackgroundPlotter`` with its ``shape`` argument instead, or embed
-   multiple ``QtInteractor`` instances directly in your own ``QLayout``
-   for full control:
-
-   .. code:: python
-
-       import pyvista as pv
-       from pyvistaqt import BackgroundPlotter
-
-       plotter = BackgroundPlotter(shape=(2, 2))
-       plotter.subplot(0, 0)
-       plotter.add_mesh(pv.Sphere())
-       plotter.subplot(0, 1)
-       plotter.add_mesh(pv.Cylinder())
-       plotter.subplot(1, 0)
-       plotter.add_mesh(pv.Cube())
-       plotter.subplot(1, 1)
-       plotter.add_mesh(pv.Cone())
-
-The following example shows how to use an interface with multiple plotters. Each
-plotter can be selected and functions like a normal PyVista ``Plotter`` instance:
+A single ``BackgroundPlotter`` can show several views: pass ``shape`` and
+select each one with ``subplot``, as with a normal PyVista ``Plotter``:
 
 .. code:: python
 
     import pyvista as pv
-    from pyvistaqt import MultiPlotter
+    from pyvistaqt import BackgroundPlotter
 
-    mp = MultiPlotter(nrows=2, ncols=2)
-    mp[0, 0].add_mesh(pv.Sphere())
-    mp[0, 1].add_mesh(pv.Cylinder())
-    mp[1, 0].add_mesh(pv.Cube())
-    mp[1, 1].add_mesh(pv.Cone())
+    plotter = BackgroundPlotter(shape=(2, 2))
+    plotter.subplot(0, 0)
+    plotter.add_mesh(pv.Sphere())
+    plotter.subplot(0, 1)
+    plotter.add_mesh(pv.Cylinder())
+    plotter.subplot(1, 0)
+    plotter.add_mesh(pv.Cube())
+    plotter.subplot(1, 1)
+    plotter.add_mesh(pv.Cone())
+
+For full control, embed multiple ``QtInteractor`` instances directly in your
+own ``QLayout``.
+
+.. versionchanged:: 0.14
+   ``MultiPlotter``, deprecated in 0.13, was removed. Use one of the two
+   approaches above instead.
 
 
 Example PyVista QtInteractor application

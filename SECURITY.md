@@ -7,9 +7,9 @@ The unreleased, unstable "dev version" is also supported.
 
 | Version | Supported                |
 | ------- | ------------------------ |
-| 0.12.x  | :heavy_check_mark: (dev) |
-| 0.11.x  | :heavy_check_mark:       |
-| < 1.11  | :x:                      |
+| 0.15.x  | :heavy_check_mark: (dev) |
+| 0.14.x  | :heavy_check_mark:       |
+| < 0.14  | :x:                      |
 
 ## Reporting a Vulnerability
 
